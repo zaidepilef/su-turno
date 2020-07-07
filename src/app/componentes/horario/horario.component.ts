@@ -33,8 +33,6 @@ export class HorarioComponent implements OnInit {
   // toma el correo y lo envia al padre TurnoComponent, TurnoComponent busca el correo en el DB por si existe el cliente
   buscaHorariosDisponibles(value: string) {
 
-    console.log('turnoInput : ', this.turnoInput);
-    console.log('value : ', value);
     this.an_request = {
       daily_schedule_date: value,
       branch_office_id: this.turnoInput.branch.branch_id
@@ -45,9 +43,15 @@ export class HorarioComponent implements OnInit {
     this.jumpservice.getBranchSchedule(this.an_request).subscribe(
       res => {
         this.an_response = res;
-        console.log('an_response : ',this.an_response);
-        this.horarios = this.an_response.schedules;
-        console.log('horarios : ',this.horarios);
+        if (this.an_response.status == "OK") {
+          if (this.an_response.schedules.lenght > 0){
+            this.horarios = this.an_response.schedules;
+          }
+
+        }
+
+        console.log('an_response : ', this.an_response);
+        console.log('horarios : ', this.horarios);
 
       },
       err => console.warn('err : ', err)

@@ -12,7 +12,14 @@ export class RegistroComponent implements OnInit {
   // salidas al padre
   @Output() clientToSend = new EventEmitter<any>();
 
-  registroValido: any;
+  registroValido: any = {
+    name: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    nuevo: false,
+    registroFrom: {},
+  };
   email: string = "";
   name: string = "";
   lastname: string = "";
@@ -77,11 +84,16 @@ export class RegistroComponent implements OnInit {
   onSubmit() {
     // una vez validado el formulario dispongo aenviar el resultado a la siguiente componente
     this.registroValido.registroFrom = this.registroForm.value;
+    this.registroValido.name = this.registroValido.registroFrom.name;
+    this.registroValido.lastname = this.registroValido.registroFrom.lastname;
+    this.registroValido.email = this.registroValido.registroFrom.email;
+    this.registroValido.phone = this.registroValido.registroFrom.phone;
+   
 
-    console.log('registroFrom : ', this.registroValido.registroFrom);
+    console.log('registroValido : ',this.registroValido);
     
     if (this.registroValido.nuevo) {
-      this.jumpservice.saveClients(this.registroValido.registroFrom).subscribe(
+      this.jumpservice.saveClients(this.registroValido).subscribe(
         res => {
           console.log('saveClients : ', res);
         },
