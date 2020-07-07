@@ -16,7 +16,7 @@
 
                 <select class="form-control" id="hour">
                     <option value="" *ngFor="let horario of horarios">
-                        {{horario.daily_schedule_hour}}
+                        {{ horario.daily_schedule_hour | date:'shortTime' }}
                     </option>
                 </select>
 

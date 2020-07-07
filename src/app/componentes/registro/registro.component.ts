@@ -49,15 +49,16 @@ export class RegistroComponent implements OnInit {
         this.an_response = res;
         console.log('an_response : ', this.an_response);
         //this.enviarDatosCliente(res);
-        if (this.an_response.status) {
+        if (this.an_response.status == "OK") {
 
-          if (this.an_response.status == "OK") {
-
+          if (this.an_response.client !== null) {
             this.email = this.an_response.client.client_email;
             this.name = this.an_response.client.client_name;
             this.lastname = this.an_response.client.client_lastname;
             this.phone = this.an_response.client.client_phone;
-
+            this.registroValido.nuevo = false;
+          } else {
+            this.registroValido.nuevo = true;
           }
 
         }
@@ -75,8 +76,17 @@ export class RegistroComponent implements OnInit {
 
   onSubmit() {
     // una vez validado el formulario dispongo aenviar el resultado a la siguiente componente
-    this.registroValido = {
-      registroFrom: this.registroForm.value,
+    this.registroValido.registroFrom = this.registroForm.value;
+
+    console.log('registroFrom : ', this.registroValido.registroFrom);
+    
+    if (this.registroValido.nuevo) {
+      this.jumpservice.saveClients(this.registroValido.registroFrom).subscribe(
+        res => {
+          console.log('saveClients : ', res);
+        },
+        err => console.warn('err : ', err)
+      );
     }
 
     this.clientToSend.emit(this.registroValido)
