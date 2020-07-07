@@ -1,0 +1,46 @@
+
+
+<div class="row justify-content-center">
+  <div class="col-7">
+    
+    <div *ngIf="showRegistro">
+      <app-registro (clientToSend)="receiveClientToSend($event)"></app-registro>
+    </div>
+    
+    <div *ngIf="showHorario">
+      <app-horario [turnoInput]="turno"></app-horario>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="" *ngFor="let branch of _branchs">
+  <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col p-4 d-flex flex-column position-static">
+
+      <h3 class="mb-0">{{branch.branch_name}}</h3>
+
+      <p class="card-text mb-auto">{{branch.branch_adress_1}}</p>
+      <p class="card-text mb-auto">{{branch.branch_adress_2}}</p>
+      <div [innerHtml]="branch.url_location_map"></div>
+
+
+    </div>
+
+  </div>
+</div>

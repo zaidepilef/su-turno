@@ -1,0 +1,54 @@
+<div class="card person-card">
+    <div class="card-body">
+
+        <img id="img_sex" class="person-img" src="../../../assets/company/company_5.png">
+        <h2 id="who_message" class="card-title">Quien eres?</h2>
+
+        <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+                <label for="email" class="col-form-label">Email</label>
+                <input type="email" class="form-control" formControlName="email" placeholder="ejemplo@correo.com" (blur)="verificaEmail($event.target.value)" [(ngModel)]="email">
+                <div *ngIf="email_feed.invalid && (email_feed.dirty || email_feed.touched)">
+                    <div *ngIf="email_feed.errors.required" class="email-feedback">Necesitamos un correo</div>
+                    <div *ngIf="email_feed.errors.email" class="email-feedback">Direccion de email no es valido</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="name" class="col-form-label">Nombre</label>
+                <input type="text" class="form-control" formControlName="name" placeholder="Nombre" [(ngModel)]="name">
+                <div *ngIf="name_feed.invalid && (name_feed.dirty || name_feed.touched)">
+                    <div *ngIf="name_feed.errors.required" class="email-feedback">Necesitamos tu nombre</div>
+                    <div *ngIf="name_feed.errors.maxLength" class="email-feedback">Nombre demasiado largo</div>
+                    <div *ngIf="name_feed.errors.pattern" class="email-feedback">Un nombre extraño</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname" class="col-form-label">Apellido</label>
+                <input type="text" class="form-control" formControlName="lastname" placeholder="Apellido" [(ngModel)]="lastname">
+                <div *ngIf="lastname_feed.invalid && (lastname_feed.dirty || lastname_feed.touched)">
+                    <div *ngIf="lastname_feed.errors.required" class="email-feedback">Necesitamos tu apellido</div>
+                    <div *ngIf="lastname_feed.errors.maxLength" class="email-feedback">Apellido demasiado largo</div>
+                    <div *ngIf="lastname_feed.errors.pattern" class="email-feedback">Un apellido extraño</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="col-form-label">Fono</label>
+                <input type="phone" class="form-control" formControlName="phone" placeholder="569 XXXX XXXX" [(ngModel)]="phone">
+                <div *ngIf="phone_feed.invalid && (phone_feed.dirty || phone_feed.touched)">
+                    <div *ngIf="phone_feed.errors.required" class="email-feedback">Necesitamos tu numero</div>
+                    <div *ngIf="phone_feed.errors.maxLength" class="email-feedback">Fono demasiado largo</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1em;">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="!registroForm.valid">Siguiente</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
