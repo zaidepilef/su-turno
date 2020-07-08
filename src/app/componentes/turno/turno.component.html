@@ -1,15 +1,31 @@
-
-
 <div class="row justify-content-center">
   <div class="col-7">
-    
-    <div *ngIf="showRegistro">
-      <app-registro (clientToSend)="receiveClientToSend($event)"></app-registro>
+
+
+    <div class="card person-card">
+      <div class="card-body">
+
+        <img class="person-img" src="../../../assets/company/company_{{turno.branchOffice.branch_id}}.png">
+        <h3 id="who_message" class="card-title">{{turno.branchOffice.branch_name}}</h3>
+        <h5 class="card-title">{{turno.branchOffice.branch_adress_1}}</h5>
+
+        <div *ngIf="showRegistro">
+          <app-registro [turnoInput]="turno" (registroOuput)="receiveRegistro($event)"></app-registro>
+        </div>
+
+        <div *ngIf="showHorario">
+          <app-horario [turnoInput]="turno"></app-horario>
+        </div>
+
+        <div *ngIf="showFinalqr">
+          <app-horario [turnoInput]="turno"></app-horario>
+        </div>
+
+
+
+      </div>
     </div>
-    
-    <div *ngIf="showHorario">
-      <app-horario [turnoInput]="turno"></app-horario>
-    </div>
+
 
   </div>
 </div>

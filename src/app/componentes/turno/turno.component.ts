@@ -4,6 +4,10 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Branch } from 'src/app/modelos/Branch';
 import { RegistroComponent } from '../registro/registro.component';
 import { HorarioComponent } from '../horario/horario.component';
+import { FinalqrComponent } from '../finalqr/finalqr.component';
+import { Turno } from './Turno.model';
+import { from } from 'rxjs';
+import { Registro } from '../registro/Registro.model';
 
 @Component({
   selector: 'app-turno',
@@ -12,7 +16,13 @@ import { HorarioComponent } from '../horario/horario.component';
 })
 export class TurnoComponent implements OnInit {
 
-  turno: any = {};
+  turno: Turno = {
+    branchOffice: {},
+    company: {},
+    finalqr: {},
+    horario: {},
+    registro: {}
+  };
 
 
   _branchs: any = [];
@@ -34,57 +44,69 @@ export class TurnoComponent implements OnInit {
   //mis hijos
   @ViewChild(RegistroComponent) hijoRegistro: RegistroComponent;
   @ViewChild(RegistroComponent) hijoHorario: HorarioComponent;
+  @ViewChild(FinalqrComponent) hijoFinalqr: FinalqrComponent;
 
   showRegistro: boolean;
   showHorario: boolean;
+  showFinalqr: boolean;
 
 
-  // Branch:Branch
+
   constructor(private router: Router, private route: ActivatedRoute, private jumpservice: JumpService) {
-    this.showRegistro = true;
-    this.showHorario = true;
+
   }
 
 
   ngOnInit(): void {
 
     let link = this.route.snapshot.paramMap.get('link');
+    console.log('link : ', link);
+    this.getDataBranchOffice(link);
 
-    this.jumpservice.getBrachLink(link).subscribe(
+  }
+
+
+  getDataBranchOffice(_val: string) {
+
+    this.jumpservice.getBrachLink(_val).subscribe(
       res => {
         this.an_response = res;
-        console.log('an_response : ', this.an_response);
+        console.log('getBrachLink : ', this.an_response);
 
         if (this.an_response.branch == null) {
           this.router.navigate([''])
           return;
         } else {
-         
+          this.turno.branchOffice = this.an_response.branch;
+          this.getDataCompany(this.turno.branchOffice.company_id);
           this.showRegistro = true;
           this.showHorario = false;
+          this.showFinalqr = false;
         }
 
       },
       err => console.warn('err : ', err)
     );
+  }
 
+  getDataCompany(_val: string) {
+
+    this.jumpservice.getCompany(_val).subscribe(
+      res => {
+        this.an_response = res;
+        console.log('getCompany : ', this.an_response);
+
+      },
+      err => console.warn('err : ', err)
+    );
   }
 
 
-
   /// recibo los datos del cliente del panatalla hijo RegistroComponent
-  receiveClientToSend(cliente: any) {
-    this.showRegistro = false;
-    this.showHorario = true;
-    console.log('an_response', this.an_response);
-    console.log('receiveClientToSend', cliente);
+  receiveRegistro(registro: Registro) {
 
-    this.turno.cliente = cliente;
-    this.turno.horario = {};
-    this.turno.branch = this.an_response.branch;
+    this.turno.registro = registro;
 
-    //debo mandarseos al this.hijoHorario
-    //this.hijoHorario.llenaFormularioHorario(this.turno);
   }
 
 

@@ -3,28 +3,35 @@
         <h4 class="card-title">Selecciona fecha y horario</h4>
         <p class="card-text">mensaje</p>
 
-        <form [formGroup]="horarioForm">
+        <form [formGroup]="horarioForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label for="date" class="col-form-label">Fecha </label>
                 <input type="date" class="form-control" (change)="buscaHorariosDisponibles($event.target.value)"
                     formControlName="date" placeholder="" [(ngModel)]="date">
+                <div *ngIf="date_feed.invalid">
+                    <div *ngIf="date_feed.errors.required" class="email-feedback">Necesitamos tu nombre</div>
+                </div>
 
             </div>
 
             <div class="form-group" *ngIf="horarios?.length > 0">
                 <label for="hour" class="col-form-label">Horarios disponibles </label>
 
-                <select class="form-control" id="hour">
-                    <option value="" *ngFor="let horario of horarios">
+                <select class="form-control" formControlName="hour" [(ngModel)]="hour">
+                    <option [ngValue]="horario" *ngFor="let horario of horarios">
                         {{ horario.daily_schedule_hour }}
                     </option>
                 </select>
 
+                <div *ngIf="hour_feed.invalid && (hour_feed.dirty || hour_feed.touched)">
+                    <div *ngIf="hour_feed.errors?.required" class="email-feedback">Seleccione horario</div>
+                </div>
 
             </div>
 
             <div style="margin-top: 1em;">
-                <button type="button" class="btn btn-primary btn-lg btn-block">Pedir Hora</button>
+                <button type="button" [disabled]="!horarioForm.valid"
+                    class="btn btn-primary btn-lg btn-block">Solicitar</button>
             </div>
 
         </form>

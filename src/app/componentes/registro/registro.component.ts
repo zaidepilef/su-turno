@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { JumpService } from 'src/app/servicios/jump.service';
+import { Registro } from './Registro.model'
 
 @Component({
   selector: 'app-registro',
@@ -10,16 +11,22 @@ import { JumpService } from 'src/app/servicios/jump.service';
 export class RegistroComponent implements OnInit {
 
   // salidas al padre
-  @Output() clientToSend = new EventEmitter<any>();
+  @Output() registroOuput = new EventEmitter<Registro>();
 
-  registroValido: any = {
-    name: "",
-    lastname: "",
+  @Input() turnoInput: any;
+
+  registro: Registro = {
     email: "",
+    id: 0,
+    lastname: "",
+    name: "",
+    new: false,
     phone: "",
-    nuevo: false,
-    registroFrom: {},
+    rut: "",
+    registroForm: {},
   };
+
+  client_id: string = "";
   email: string = "";
   name: string = "";
   lastname: string = "";
@@ -37,78 +44,88 @@ export class RegistroComponent implements OnInit {
   get phone_feed() { return this.registroForm.get('phone'); }
 
   ngOnInit(): void {
+
     this.registroForm = this.formBuilder.group(
       {
         email: ['', [Validators.required, Validators.email]],
         name: ['', [Validators.pattern(/^[a-zA-Z ]+$/), Validators.required, Validators.maxLength(32)]],
         lastname: ['', [Validators.pattern(/^[a-zA-Z ]+$/), Validators.required, Validators.maxLength(32)]],
-        phone: ['', [Validators.pattern(/^[0-9]+$/), Validators.required, Validators.maxLength(12)]]
+        phone: ['', [Validators.pattern(/^[0-9]+$/), Validators.required, Validators.maxLength(11)]]
       }
     );
+
   }
 
-  // toma el correo y lo envia al padre TurnoComponent, TurnoComponent busca el correo en el DB por si existe el cliente
-  verificaEmail(value: string) {
+  // Existe CLiente se auto completa el formulario
+  verificaEmail(_val: string) {
 
-    this.email = value;
+    this.email = _val;
+
     this.jumpservice.getClientByEmail(this.email).subscribe(
       res => {
         this.an_response = res;
-        console.log('an_response : ', this.an_response);
-        //this.enviarDatosCliente(res);
+
         if (this.an_response.status == "OK") {
 
           if (this.an_response.client !== null) {
-            this.email = this.an_response.client.client_email;
-            this.name = this.an_response.client.client_name;
-            this.lastname = this.an_response.client.client_lastname;
-            this.phone = this.an_response.client.client_phone;
-            this.registroValido.nuevo = false;
+            this.registro.id = this.an_response.client.client_id;
+            this.registro.email = this.an_response.client.client_email;
+            this.registro.name = this.an_response.client.client_name;
+            this.registro.lastname = this.an_response.client.client_lastname;
+            this.registro.phone = this.an_response.client.client_phone;
+            this.registro.rut = this.an_response.client.rut;
+            this.registro.new = false;
           } else {
-            this.registroValido.nuevo = true;
+            this.registro.new = true;
           }
-
         }
-
       },
       err => console.warn('err : ', err)
     );
-    if (this.email.length > 7) {
-
-
-    }
-
   }
 
+  saveRegistro() {
 
-  onSubmit() {
-    // una vez validado el formulario dispongo aenviar el resultado a la siguiente componente
-    this.registroValido.registroFrom = this.registroForm.value;
-    this.registroValido.name = this.registroValido.registroFrom.name;
-    this.registroValido.lastname = this.registroValido.registroFrom.lastname;
-    this.registroValido.email = this.registroValido.registroFrom.email;
-    this.registroValido.phone = this.registroValido.registroFrom.phone;
-   
+    if (this.registro.new) {
 
-    console.log('registroValido : ',this.registroValido);
-    
-    if (this.registroValido.nuevo) {
-      this.jumpservice.saveClients(this.registroValido).subscribe(
+      this.jumpservice.saveClients(this.registro).subscribe(
         res => {
           console.log('saveClients : ', res);
         },
         err => console.warn('err : ', err)
       );
+
+    } else {
+
+      this.jumpservice.updateClient(this.registro.id, this.registro).subscribe(
+        res => {
+          console.log('updateClient : ', res);
+        },
+        err => console.warn('err : ', err)
+      );
+
     }
 
-    this.clientToSend.emit(this.registroValido)
-    /*
-    // stop here if form is invalid
-    if (this.registroForm.invalid) {
-      console.log('registroForm.invalid', this.registroForm);
-      return;
+  }
+
+  onSubmit() {
+
+    if (!this.registroForm.invalid) {
+
+      this.registro.registroForm = this.registroForm.value;
+      this.registro.name = this.registro.registroForm.name;
+      this.registro.lastname = this.registro.registroForm.lastname;
+      this.registro.email = this.registro.registroForm.email;
+      this.registro.phone = this.registro.registroForm.phone;
+      this.saveRegistro();
+
+      this.registroOuput.emit(this.registro);
     }
-    */
+
+
+
+
+
 
   }
 

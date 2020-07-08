@@ -75,11 +75,11 @@ export class JumpService {
     return this.httpClient.get(`${this.SERVER_URL}/clients`);
   }
 
-  public saveClients(client: Client) {
+  public saveClients(client: any) {
     return this.httpClient.post(`${this.SERVER_URL}/clients`, client);
   }
 
-  public updateClient(id: string, clientUpdated: Client) {
+  public updateClient(id: number, clientUpdated: any) {
 
     return this.httpClient.put(`${this.SERVER_URL}/clients/${id}`, clientUpdated);
 

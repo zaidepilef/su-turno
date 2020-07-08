@@ -16,15 +16,21 @@ export class HorarioComponent implements OnInit {
   an_response: any = {};
   an_request: any = {};
   date: string = '';
+  hour: string = '';
   horarioForm: FormGroup;
 
 
   constructor(private route: ActivatedRoute, private jumpservice: JumpService, private formBuilder: FormBuilder) { }
 
+  get date_feed() { return this.horarioForm.get('date'); }
+  get hour_feed() { return this.horarioForm.get('hour'); }
+
+
   ngOnInit(): void {
     this.horarioForm = this.formBuilder.group(
       {
-        date: ['', [Validators.required]]
+        date: ['', [Validators.required]],
+        hour: ['', [Validators.required]]
       }
     );
 
@@ -38,21 +44,19 @@ export class HorarioComponent implements OnInit {
       branch_office_id: this.turnoInput.branch.branch_id
     }
 
-    console.log('an_request : ', this.an_request);
+    console.log('this.an_request: ', this.an_request);
 
     this.jumpservice.getBranchSchedule(this.an_request).subscribe(
       res => {
         this.an_response = res;
+        console.log('this.an_response: ', this.an_response.schedules.length);
+
         if (this.an_response.status == "OK") {
-          if (this.an_response.schedules.lenght > 0){
+          if (this.an_response.schedules.length > 0) {
             this.horarios = this.an_response.schedules;
           }
 
         }
-
-        console.log('an_response : ', this.an_response);
-        console.log('horarios : ', this.horarios);
-
       },
       err => console.warn('err : ', err)
     );
@@ -61,6 +65,8 @@ export class HorarioComponent implements OnInit {
   }
 
 
-
+  onSubmit(){
+    
+  }
 
 }
